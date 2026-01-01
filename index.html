@@ -131,11 +131,7 @@
                     <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Gift Your Watch</h2>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button onclick="toggleDarkMode()"
-                        class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
-                        <span
-                            class="material-symbols-outlined material-fill text-text-muted dark:text-white">light_mode</span>
-                    </button>
+                    <!-- Dark mode toggle removed -->
                 </div>
             </header>
         </div>
@@ -472,6 +468,15 @@
         <p>© 2024 Watch Donation Campaign. All rights reserved.</p>
     </footer>
 
+    <!-- LOADING OVERLAY -->
+    <div id="loading-overlay"
+        class="fixed inset-0 z-[100] hidden flex-col items-center justify-center bg-white/90 dark:bg-black/90 backdrop-blur-sm transition-all">
+        <div class="size-16 border-4 border-border-light border-t-primary rounded-full animate-spin mb-4"></div>
+        <h3 id="loading-text" class="text-xl font-bold text-text-main dark:text-white animate-pulse">Preparing your
+            certificate...</h3>
+        <p class="text-sm text-text-muted mt-2">Please wait, this may take a moment.</p>
+    </div>
+
     <!-- Logic -->
     <script>
         // --- CONFIGURATION ---
@@ -762,31 +767,89 @@
             goToStep('success');
         }
 
+        // --- LOADING HELPER ---
+        function showLoading(message) {
+            document.getElementById('loading-text').textContent = message;
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('loading-overlay').classList.add('flex');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+            document.getElementById('loading-overlay').classList.remove('flex');
+        }
+
         function downloadPDF() {
-            const certElement = document.getElementById('certificate-visual');
-            html2canvas(certElement, {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: null,
-                logging: false
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Certificate-${userData.fullName.replace(/\s+/g, '-')}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
+            showLoading("Downloading certificate...");
+
+            // Small delay to ensure UI updates before heavy task
+            setTimeout(() => {
+                const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
+
+                html2canvas(certElement, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: null,
+                    logging: false
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `Certificate-${userData.fullName.replace(/\s+/g, '-')}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    hideLoading();
+                }).catch(err => {
+                    console.error(err);
+                    alert("Error downloading image.");
+                    hideLoading();
+                });
+            }, 100);
         }
 
         function shareImpact() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Watch Donation Certificate',
-                    text: 'I just donated my watch to the Watch Donation Campaign!',
-                    url: window.location.href
+            showLoading("Preparing to share...");
+
+            setTimeout(() => {
+                const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
+
+                html2canvas(certElement, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: null,
+                    logging: false
+                }).then(canvas => {
+                    canvas.toBlob(blob => {
+                        if (blob) {
+                            const file = new File([blob], `Certificate-${userData.fullName.replace(/\s+/g, '-')}.png`, { type: 'image/png' });
+
+                            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                                navigator.share({
+                                    files: [file],
+                                    title: 'Watch Donation Certificate',
+                                    text: 'I just gifted my watch to support students! Join the movement.',
+                                    // url: window.location.href // Optional: Add URL if desired
+                                }).then(() => {
+                                    hideLoading();
+                                }).catch((error) => {
+                                    console.error('Sharing failed', error);
+                                    hideLoading();
+                                });
+                            } else {
+                                // Fallback for browsers that don't support file sharing
+                                hideLoading();
+                                alert("Image ready! Please download it manually to share.");
+                                downloadPDF(); // Trigger download as fallback
+                            }
+                        } else {
+                            hideLoading();
+                            alert("Could not generate image for sharing.");
+                        }
+                    }, 'image/png');
+                }).catch(err => {
+                    console.error(err);
+                    hideLoading();
+                    alert("Error preparing image for sharing.");
                 });
-            } else {
-                alert("Share this link: " + window.location.href);
-            }
+            }, 100);
         }
 
         function resetApp() {
