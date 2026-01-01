@@ -237,24 +237,26 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                                 <div>
                                     <label
-                                        class="block text-xs font-bold text-primary uppercase tracking-widest mb-2 pl-2">Phone
+                                        class="block text-xs font-bold text-primary uppercase tracking-widest mb-2 pl-2">WhatsApp
+                                        Number
                                         <span class="text-red-500">*</span></label>
                                     <div
                                         class="w-full flex items-center bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-2xl focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all overflow-hidden h-[58px]">
-                                        <div class="relative flex items-center h-full pl-4 flex-shrink-0">
+                                        <!-- Country Code (25%) -->
+                                        <div
+                                            class="relative flex items-center h-full pl-2 w-1/4 border-r border-border-light dark:border-border-dark bg-black/5 dark:bg-white/5">
                                             <select id="countryCode"
-                                                class="bg-transparent border-none text-text-main dark:text-white focus:ring-0 text-sm cursor-pointer appearance-none pr-7 font-medium py-0 h-full outline-none shadow-none min-w-[60px] max-w-[140px] truncate">
+                                                class="w-full bg-transparent border-none text-text-main dark:text-white focus:ring-0 text-sm cursor-pointer appearance-none px-2 font-medium py-0 h-full outline-none shadow-none truncate text-center">
                                                 <!-- Will be populated by JS -->
                                                 <option value="+91">India (+91)</option>
                                             </select>
                                             <span
-                                                class="absolute right-0 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-muted text-sm pointer-events-none pr-1">arrow_drop_down</span>
+                                                class="absolute right-1 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-muted text-sm pointer-events-none">arrow_drop_down</span>
                                         </div>
-                                        <div
-                                            class="w-px h-6 bg-border-light dark:border-border-dark mx-2 flex-shrink-0">
-                                        </div>
+
+                                        <!-- Phone Input (75%) -->
                                         <input id="phone" required type="tel" placeholder="99999 99999"
-                                            class="flex-1 bg-transparent border-none text-text-main dark:text-white focus:ring-0 placeholder-text-muted/50 p-0 h-full w-full min-w-0 pr-4" />
+                                            class="w-3/4 bg-transparent border-none text-text-main dark:text-white focus:ring-0 placeholder-text-muted/50 p-0 h-full pl-4 pr-4" />
                                     </div>
                                 </div>
                                 <div>
@@ -265,19 +267,18 @@
                                         class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-2xl px-5 py-4 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-text-muted/50 h-[58px]" />
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Actions -->
-                        <div class="pt-6 flex gap-4">
-                            <button type="button" onclick="goToStep('landing')"
-                                class="flex-1 px-6 py-4 rounded-full border border-border-light dark:border-border-dark text-text-muted hover:bg-black/5 dark:hover:bg-white/5 font-medium transition-all">
-                                Back
-                            </button>
-                            <button type="submit"
-                                class="flex-1 px-6 py-4 rounded-full bg-primary hover:bg-primary-dark text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
-                                Preview Certificate
-                            </button>
-                        </div>
+                            <!-- Actions -->
+                            <div class="pt-6 flex gap-4">
+                                <button type="button" onclick="goToStep('landing')"
+                                    class="flex-1 px-4 py-3 text-sm rounded-full border border-border-light dark:border-border-dark text-text-muted hover:bg-black/5 dark:hover:bg-white/5 font-medium transition-all">
+                                    Back
+                                </button>
+                                <button type="submit"
+                                    class="flex-1 px-4 py-3 text-sm rounded-full bg-primary hover:bg-primary-dark text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                    Preview Certificate
+                                </button>
+                            </div>
                     </form>
                 </div>
             </section>
@@ -716,11 +717,11 @@
         function saveCrop() {
             if (!cropper) return;
             const canvas = cropper.getCroppedCanvas({
-                width: 400,
-                height: 400,
+                width: 1080,
+                height: 1080,
             });
 
-            userData.photo = canvas.toDataURL('image/jpeg', 0.9);
+            userData.photo = canvas.toDataURL('image/jpeg', 1.0);
             updatePhotoPreviews();
             closeCropperModal();
         }
@@ -787,7 +788,7 @@
                 const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
 
                 html2canvas(certElement, {
-                    scale: 2,
+                    scale: 4, // High Resolution
                     useCORS: true,
                     backgroundColor: null,
                     logging: false
@@ -812,7 +813,7 @@
                 const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
 
                 html2canvas(certElement, {
-                    scale: 2,
+                    scale: 3, // Better quality for sharing
                     useCORS: true,
                     backgroundColor: null,
                     logging: false
