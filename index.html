@@ -722,22 +722,23 @@
         function capturePhoto() {
             if (!stream) return;
 
-            // Instant Feedback: Show processing state
-            showLoading("Processing photo...");
+            // IMPORTANT: Capture frame BEFORE closing modal (stream stops when modal closes)
+            const canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            const ctx = canvas.getContext('2d');
+            // Flip horizontal for mirror effect
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(videoElement, 0, 0);
+            const dataURL = canvas.toDataURL('image/jpeg');
+
+            // Now safe to close modal (frame already captured)
             closeCameraModal();
 
-            // Defer heavy canvas ops to next tick
+            // Show loading and open cropper
+            showLoading("Processing photo...");
             runAfterPaint(() => {
-                const canvas = document.createElement('canvas');
-                canvas.width = videoElement.videoWidth;
-                canvas.height = videoElement.videoHeight;
-                const ctx = canvas.getContext('2d');
-                // Flip horizontal for mirror effect
-                ctx.translate(canvas.width, 0);
-                ctx.scale(-1, 1);
-                ctx.drawImage(videoElement, 0, 0);
-
-                const dataURL = canvas.toDataURL('image/jpeg');
                 hideLoading();
                 openCropperModal(dataURL);
             });
