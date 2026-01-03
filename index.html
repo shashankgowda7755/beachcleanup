@@ -727,33 +727,35 @@
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
-                // 1. Instant Feedback: Show loading state immediately
                 showLoading("Analyzing image...");
 
-                // 2. Defer heavy processing to next tick
                 setTimeout(() => {
+                    const objectUrl = window.URL.createObjectURL(file);
+
+                    // Pre-load image to check dimensions (fast)
                     const img = new Image();
-                    img.src = window.URL.createObjectURL(file);
+                    img.src = objectUrl;
+
                     img.onload = () => {
-                        window.URL.revokeObjectURL(img.src);
-                        if (img.width > 5000 || img.height > 5000) {
+                        if (img.width > 8000 || img.height > 8000) { // Increased limit slightly, mostly sanity check
+                            window.URL.revokeObjectURL(objectUrl);
                             hideLoading();
-                            alert("Image is too large (max 5000x5000). Please verify and try again.");
+                            alert("Image is extremely large. Please use a smaller photo.");
                             return;
                         }
 
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            hideLoading(); // Turn off loading before showing cropper
-                            openCropperModal(e.target.result);
-                        };
-                        reader.readAsDataURL(file);
+                        // OPTIMIZATION: Use the Object URL directly! 
+                        // Do NOT use FileReader (Base64 conversion is 10x slower)
+                        hideLoading();
+                        openCropperModal(objectUrl);
                     };
+
                     img.onerror = () => {
+                        window.URL.revokeObjectURL(objectUrl);
                         hideLoading();
                         alert("Invalid image file.");
                     };
-                }, 0);
+                }, 50);
             }
             event.target.value = '';
         }
@@ -870,7 +872,7 @@
                 document.getElementById('final-cert-container').appendChild(certNode);
 
                 goToStep('success'); // The "Conditional Render" switch
-            }, 0);
+            }, 50);
         }
 
         // --- LOADING HELPER ---
@@ -908,7 +910,7 @@
                     alert("Error downloading image.");
                     hideLoading();
                 });
-            }, 0);
+            }, 100);
         }
 
         function shareImpact() {
