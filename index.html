@@ -300,8 +300,9 @@
                                     <label for="consentCheckbox" class="text-sm text-text-muted dark:text-[#a8a29e]">
                                         I agree to the use of my information for poster generation and future event
                                         updates, with the option to opt out anytime.
-                                        To know more, click on <a href="privacy-policy.html" target="_blank" Policy</a>
-                                            </p>
+                                        To know more, click on <a href="privacy-policy.html" target="_blank"
+                                            class="text-primary hover:underline">Privacy Policy</a>
+                                    </label>
                                 </div>
                             </div>
 
@@ -534,7 +535,6 @@
         // --- GOOGLE SHEETS INTEGRATION ---
         function submitToGoogleSheet() {
             if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE")) {
-                console.warn("Google Script URL not set. Data not saved to Sheets.");
                 return;
             }
 
@@ -557,7 +557,7 @@
                 },
                 body: JSON.stringify(payload)
             }).then(() => {
-                console.log("Data submitted to Google Sheets");
+                // Success
             }).catch(error => {
                 console.error("Error submitting to Google Sheets:", error);
             });
@@ -842,9 +842,9 @@
             e.preventDefault();
 
             // Honeypot Check
+            // Honeypot Check
             const honeypot = document.getElementById('website_field');
             if (honeypot && honeypot.value) {
-                console.warn("Bot detected.");
                 return; // Silent fail
             }
 
