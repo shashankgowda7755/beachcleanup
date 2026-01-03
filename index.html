@@ -727,22 +727,33 @@
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
-                // Resolution Check
-                const img = new Image();
-                img.src = window.URL.createObjectURL(file);
-                img.onload = () => {
-                    window.URL.revokeObjectURL(img.src);
-                    if (img.width > 5000 || img.height > 5000) {
-                        alert("Image is too large (max 5000x5000). Please verify and try again.");
-                        return;
-                    }
+                // 1. Instant Feedback: Show loading state immediately
+                showLoading("Analyzing image...");
 
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        openCropperModal(e.target.result);
+                // 2. Defer heavy processing to next tick
+                setTimeout(() => {
+                    const img = new Image();
+                    img.src = window.URL.createObjectURL(file);
+                    img.onload = () => {
+                        window.URL.revokeObjectURL(img.src);
+                        if (img.width > 5000 || img.height > 5000) {
+                            hideLoading();
+                            alert("Image is too large (max 5000x5000). Please verify and try again.");
+                            return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            hideLoading(); // Turn off loading before showing cropper
+                            openCropperModal(e.target.result);
+                        };
+                        reader.readAsDataURL(file);
                     };
-                    reader.readAsDataURL(file);
-                };
+                    img.onerror = () => {
+                        hideLoading();
+                        alert("Invalid image file.");
+                    };
+                }, 50);
             }
             event.target.value = '';
         }
@@ -843,11 +854,23 @@
         }
 
         function finalizeCertificate() {
-            submitToGoogleSheet();
-            document.getElementById('draft-overlay').style.display = 'none';
-            const certNode = document.querySelector('#certificate-visual').parentNode;
-            document.getElementById('final-cert-container').appendChild(certNode);
-            goToStep('success');
+            // Instant Feedback: Show processing state
+            showLoading("Finalizing certificate...");
+
+            // Defer network/generation to next tick
+            setTimeout(() => {
+                submitToGoogleSheet(); // Fire and forget (async)
+
+                // Instant State Switch
+                hideLoading();
+                document.getElementById('draft-overlay').style.display = 'none';
+
+                // Move element in DOM
+                const certNode = document.querySelector('#certificate-visual').parentNode;
+                document.getElementById('final-cert-container').appendChild(certNode);
+
+                goToStep('success'); // The "Conditional Render" switch
+            }, 50);
         }
 
         // --- LOADING HELPER ---
