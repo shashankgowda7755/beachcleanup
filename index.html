@@ -753,7 +753,7 @@
                         hideLoading();
                         alert("Invalid image file.");
                     };
-                }, 50);
+                }, 0);
             }
             event.target.value = '';
         }
@@ -870,7 +870,7 @@
                 document.getElementById('final-cert-container').appendChild(certNode);
 
                 goToStep('success'); // The "Conditional Render" switch
-            }, 50);
+            }, 0);
         }
 
         // --- LOADING HELPER ---
