@@ -424,7 +424,7 @@
                             </div>
 
                             <!-- Dynamic Name Overlay (Includes 'DEAR' prefix to overlap background) -->
-                            <div class="absolute top-[69%] left-[8%] w-[80%] text-left flex items-center h-[5%]">
+                            <div class="absolute top-[66%] left-[8%] w-[80%] text-left flex items-center h-[5%]">
                                 <h2
                                     class="text-lg sm:text-xl font-display font-black text-[#292524] uppercase tracking-wide leading-none">
                                     <span>DEAR </span>
@@ -919,15 +919,30 @@
             setTimeout(() => {
                 const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
 
+                // Fixed output dimensions for consistency across devices (Instagram 4:5 ratio)
+                const outputWidth = 1080;
+                const outputHeight = 1440;
+
                 html2canvas(certElement, {
                     scale: 2, // Optimized for performance (Retina)
                     useCORS: true,
-                    backgroundColor: null,
-                    logging: false
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    width: certElement.offsetWidth,
+                    height: certElement.offsetHeight,
+                    windowWidth: certElement.offsetWidth,
+                    windowHeight: certElement.offsetHeight
                 }).then(canvas => {
+                    // Resize to fixed Instagram dimensions
+                    const resizedCanvas = document.createElement('canvas');
+                    resizedCanvas.width = outputWidth;
+                    resizedCanvas.height = outputHeight;
+                    const ctx = resizedCanvas.getContext('2d');
+                    ctx.drawImage(canvas, 0, 0, outputWidth, outputHeight);
+
                     const link = document.createElement('a');
                     link.download = `Certificate-${userData.fullName.replace(/\s+/g, '-')}.png`;
-                    link.href = canvas.toDataURL('image/png');
+                    link.href = resizedCanvas.toDataURL('image/png');
                     link.click();
                     hideLoading();
                 }).catch(err => {
@@ -944,13 +959,28 @@
             setTimeout(() => {
                 const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
 
+                // Fixed output dimensions for consistency across devices (Instagram 4:5 ratio)
+                const outputWidth = 1080;
+                const outputHeight = 1440;
+
                 html2canvas(certElement, {
                     scale: 2, // Optimized for performance
                     useCORS: true,
-                    backgroundColor: null,
-                    logging: false
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    width: certElement.offsetWidth,
+                    height: certElement.offsetHeight,
+                    windowWidth: certElement.offsetWidth,
+                    windowHeight: certElement.offsetHeight
                 }).then(canvas => {
-                    canvas.toBlob(blob => {
+                    // Resize to fixed Instagram dimensions
+                    const resizedCanvas = document.createElement('canvas');
+                    resizedCanvas.width = outputWidth;
+                    resizedCanvas.height = outputHeight;
+                    const ctx = resizedCanvas.getContext('2d');
+                    ctx.drawImage(canvas, 0, 0, outputWidth, outputHeight);
+
+                    resizedCanvas.toBlob(blob => {
                         if (blob) {
                             const file = new File([blob], `Certificate-${userData.fullName.replace(/\s+/g, '-')}.png`, { type: 'image/png' });
 
@@ -959,7 +989,6 @@
                                     files: [file],
                                     title: 'Watch Donation Certificate',
                                     text: 'I just gifted my watch to support students! Join the movement.',
-                                    // url: window.location.href // Optional: Add URL if desired
                                 }).then(() => {
                                     hideLoading();
                                 }).catch((error) => {
