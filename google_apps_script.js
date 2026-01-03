@@ -1,7 +1,7 @@
 // -------------------------------------------------------------------------------------------------
-// GOOGLE APPS SCRIPT CODE
+// GOOGLE APPS SCRIPT CODE - UPDATED VERSION
 // 1. Go to https://script.google.com/home
-// 2. Create a 'New Project'
+// 2. Create a 'New Project' OR open your existing project
 // 3. Delete any code in 'Code.gs' and paste this entire script.
 // 4. (Optional) Create a Folder in Google Drive to store images, and copy its ID into the 'DRIVE_FOLDER_ID' variable below.
 // 5. Click 'Deploy' -> 'New Deployment' -> Select type 'Web app'.
@@ -23,18 +23,29 @@ function doPost(e) {
         // Create sheet if not exists
         if (!sheet) {
             sheet = ss.insertSheet(SHEET_NAME);
-            // Add Headers
-            sheet.appendRow(["Date", "Full Name", "Phone", "Email", "Marketing Opt-In", "Photo URL/Base64"]);
+            // Add Headers - Updated with all fields
+            sheet.appendRow([
+                "Date",
+                "Time",
+                "Full Name",
+                "Country Code",
+                "Phone Number",
+                "Full Phone",
+                "Email",
+                "Privacy Consent",
+                "Marketing Opt-In",
+                "Photo URL/Status"
+            ]);
         }
 
         let photoValue = "No Photo";
 
-        // Handle Photo (Upload to Drive or Store Raw)
+        // Handle Photo (Upload to Drive or Store Link)
         if (data.photo) {
             if (DRIVE_FOLDER_ID && DRIVE_FOLDER_ID.length > 5) {
                 try {
                     const folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
-                    const type = data.photo.split(';')[0].split('/')[1]; // e.g., 'png'
+                    const type = data.photo.split(';')[0].split('/')[1]; // e.g., 'png' or 'jpeg'
                     const decoded = Utilities.base64Decode(data.photo.split(',')[1]);
                     const blob = Utilities.newBlob(decoded, 'image/' + type, data.fullName + "_" + Date.now() + "." + type);
                     const file = folder.createFile(blob);
@@ -44,19 +55,27 @@ function doPost(e) {
                 }
             } else {
                 // If no folder ID, we can't store huge base64 strings in a cell reliably (50k limit). 
-                // We'll store a truncated version or flag it.
-                photoValue = "Base64 Image (Drive Folder ID not set)";
+                photoValue = "Photo received (Drive Folder ID not set)";
             }
         }
 
-        // Append Data
+        // Get current date and time in readable format
+        const now = new Date();
+        const dateStr = Utilities.formatDate(now, Session.getScriptTimeZone(), "yyyy-MM-dd");
+        const timeStr = Utilities.formatDate(now, Session.getScriptTimeZone(), "HH:mm:ss");
+
+        // Append Data - All fields from the form
         sheet.appendRow([
-            new Date(),
-            data.fullName,
-            data.phone,
-            data.email,
-            data.marketingOptIn ? "Yes" : "No",
-            photoValue
+            dateStr,                                    // Date
+            timeStr,                                    // Time
+            data.fullName || "",                        // Full Name
+            data.countryCode || "",                     // Country Code (e.g., +91)
+            data.phoneNumber || "",                     // Phone Number (without country code)
+            data.phone || "",                           // Full Phone (country code + number)
+            data.email || "",                           // Email
+            data.privacyConsent ? "Yes" : "No",         // Privacy Policy Consent
+            data.marketingOptIn ? "Yes" : "No",         // Marketing Opt-In
+            photoValue                                  // Photo URL or Status
         ]);
 
         return ContentService.createTextOutput(JSON.stringify({ "status": "success", "message": "Data saved" }))

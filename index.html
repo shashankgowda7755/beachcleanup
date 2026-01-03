@@ -545,9 +545,12 @@
 
             const payload = {
                 fullName: userData.fullName,
-                phone: userData.phone,
+                countryCode: userData.countryCode,
+                phoneNumber: userData.phoneNumber,
+                phone: userData.phone,  // Full phone with country code
                 email: userData.email,
-                marketingOptIn: userData.marketingOptIn, // New Field
+                privacyConsent: userData.privacyConsent,
+                marketingOptIn: userData.marketingOptIn,
                 photo: userData.photo // Warning: Base64 might be large
             };
 
@@ -568,10 +571,12 @@
         // State
         let userData = {
             fullName: '',
+            countryCode: '',
+            phoneNumber: '',
             phone: '',
             email: '',
+            privacyConsent: false,
             marketingOptIn: false,
-            // watchModel removed
             photo: null // DataURL
         };
 
@@ -868,8 +873,11 @@
                 userData.fullName = sanitizeInput(fullNameInput);
 
                 const countryCode = document.getElementById('countryCode').value;
+                userData.countryCode = countryCode;
+                userData.phoneNumber = phone;
                 userData.phone = `${countryCode} ${phone}`;
                 userData.email = sanitizeInput(document.getElementById('email').value);
+                userData.privacyConsent = document.getElementById('consentCheckbox').checked;
                 userData.marketingOptIn = document.getElementById('marketingCheckbox').checked;
 
                 hideLoading();
