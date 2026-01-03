@@ -24,7 +24,7 @@ function doPost(e) {
         if (!sheet) {
             sheet = ss.insertSheet(SHEET_NAME);
             // Add Headers
-            sheet.appendRow(["Date", "Full Name", "Phone", "Email", "Photo URL/Base64"]);
+            sheet.appendRow(["Date", "Full Name", "Phone", "Email", "Marketing Opt-In", "Photo URL/Base64"]);
         }
 
         let photoValue = "No Photo";
@@ -55,6 +55,7 @@ function doPost(e) {
             data.fullName,
             data.phone,
             data.email,
+            data.marketingOptIn ? "Yes" : "No",
             photoValue
         ]);
 

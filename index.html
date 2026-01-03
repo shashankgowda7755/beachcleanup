@@ -265,6 +265,52 @@
                                         <span class="text-red-500">*</span></label>
                                     <input id="email" required type="email" placeholder="john@example.com"
                                         class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-2xl px-5 py-4 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-text-muted/50 h-[58px]" />
+                                    <!-- Privacy Disclaimer -->
+                                    <p class="text-[10px] text-text-muted mt-2 pl-2 leading-tight">
+                                        We store your name and email solely to record your donation pledge. We do not
+                                        share this data.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Honeypot Field (Hidden) -->
+                            <div class="absolute opacity-0 -z-10 pointer-events-none">
+                                <label for="website_field">Website</label>
+                                <input type="text" id="website_field" name="website_field" tabindex="-1"
+                                    autocomplete="off">
+                            </div>
+
+                            <!-- Marketing Opt-In -->
+                            <div class="flex items-start gap-3 pt-4">
+                                <div class="flex items-center h-5">
+                                    <input id="marketingCheckbox" type="checkbox"
+                                        class="w-4 h-4 text-primary bg-background-light border-border-light rounded focus:ring-primary focus:ring-2 dark:bg-background-dark dark:border-border-dark cursor-pointer">
+                                </div>
+                                <div class="text-sm">
+                                    <label for="marketingCheckbox"
+                                        class="font-medium text-text-main dark:text-white cursor-pointer select-none">
+                                        I agree to receive updates about the campaign.
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Privacy & Consent -->
+                            <div class="flex items-start gap-3 pt-6 pb-2">
+                                <div class="flex items-center h-5">
+                                    <input id="consentCheckbox" type="checkbox" required
+                                        class="w-4 h-4 text-primary bg-background-light border-border-light rounded focus:ring-primary focus:ring-2 dark:bg-background-dark dark:border-border-dark cursor-pointer">
+                                </div>
+                                <div class="text-sm">
+                                    <label for="consentCheckbox"
+                                        class="font-medium text-text-main dark:text-white cursor-pointer select-none">
+                                        I agree to the processing of my personal data for the purpose of generating this
+                                        certificate.
+                                    </label>
+                                    <p class="text-text-muted text-xs mt-1">
+                                        To know more, click on <a href="privacy-policy.html" target="_blank"
+                                            class="text-primary hover:underline hover:text-primary-dark transition-colors">Privacy
+                                            Policy</a>
+                                    </p>
                                 </div>
                             </div>
 
@@ -497,6 +543,7 @@
                 fullName: userData.fullName,
                 phone: userData.phone,
                 email: userData.email,
+                marketingOptIn: userData.marketingOptIn, // New Field
                 photo: userData.photo // Warning: Base64 might be large
             };
 
@@ -519,6 +566,7 @@
             fullName: '',
             phone: '',
             email: '',
+            marketingOptIn: false,
             // watchModel removed
             photo: null // DataURL
         };
@@ -680,11 +728,22 @@
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    openCropperModal(e.target.result);
+                // Resolution Check
+                const img = new Image();
+                img.src = window.URL.createObjectURL(file);
+                img.onload = () => {
+                    window.URL.revokeObjectURL(img.src);
+                    if (img.width > 5000 || img.height > 5000) {
+                        alert("Image is too large (max 5000x5000). Please verify and try again.");
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        openCropperModal(e.target.result);
+                    };
+                    reader.readAsDataURL(file);
                 };
-                reader.readAsDataURL(file);
             }
             event.target.value = '';
         }
@@ -736,17 +795,40 @@
             if (certPhoto) certPhoto.src = userData.photo;
         }
 
+        // Helper: Basic Sanitization
+        function sanitizeInput(str) {
+            const temp = document.createElement('div');
+            temp.textContent = str;
+            return temp.innerHTML;
+        }
+
         // --- FORM SUBMISSION ---
         function handleFormSubmit(e) {
             e.preventDefault();
-            userData.fullName = document.getElementById('fullName').value;
+
+            // Honeypot Check
+            const honeypot = document.getElementById('website_field');
+            if (honeypot && honeypot.value) {
+                console.warn("Bot detected.");
+                return; // Silent fail
+            }
+
+            // Sanitize Name
+            userData.fullName = sanitizeInput(document.getElementById('fullName').value);
+
             const countryCode = document.getElementById('countryCode').value;
             const phone = document.getElementById('phone').value;
             userData.phone = `${countryCode} ${phone}`;
-            userData.email = document.getElementById('email').value;
+            userData.email = sanitizeInput(document.getElementById('email').value);
+            userData.marketingOptIn = document.getElementById('marketingCheckbox').checked;
 
             if (!userData.fullName || !phone) return alert("Please fill in key fields");
             if (!userData.photo) return alert("Please upload a photo");
+
+            const consentCheckbox = document.getElementById('consentCheckbox');
+            if (!consentCheckbox.checked) {
+                return alert("You must agree to the privacy policy data processing to continue.");
+            }
 
             goToStep('preview');
         }
