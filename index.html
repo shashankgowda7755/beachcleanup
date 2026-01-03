@@ -198,7 +198,7 @@
 
                             <!-- Preview Circle -->
                             <div
-                                class="group relative w-36 h-36 rounded-full border-2 border-dashed border-border-dark hover:border-primary flex items-center justify-center overflow-hidden bg-background-light dark:bg-black/20 transition-all shadow-inner">
+                                class="group relative w-36 h-36 rounded-full border-2 border-dashed border-border-dark hover:border-primary flex items-center justify-center overflow-hidden bg-background-light dark:bg-black/20 transition-colors shadow-inner">
                                 <img id="photoPreview" class="hidden w-full h-full object-cover" />
                                 <div id="photoPlaceholder" class="text-center p-4 text-text-muted">
                                     <span class="material-symbols-outlined text-4xl mb-1">person</span>
@@ -230,7 +230,7 @@
                                     class="block text-xs font-bold text-primary uppercase tracking-widest mb-2 pl-2">Full
                                     Name <span class="text-red-500">*</span></label>
                                 <input id="fullName" required type="text" placeholder="Enter your full name"
-                                    class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-2xl px-5 py-4 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-text-muted/50" />
+                                    class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-2xl px-5 py-4 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors placeholder-text-muted/50" />
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
@@ -240,7 +240,7 @@
                                         Number
                                         <span class="text-red-500">*</span></label>
                                     <div
-                                        class="w-full flex items-center bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-2xl focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all overflow-hidden h-[58px]">
+                                        class="w-full flex items-center bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-2xl focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-colors overflow-hidden h-[58px]">
                                         <!-- Country Code (25%) -->
                                         <div
                                             class="relative flex items-center h-full pl-2 w-1/4 border-r border-border-light dark:border-border-dark bg-black/5 dark:bg-white/5">
@@ -263,7 +263,7 @@
                                         class="block text-xs font-bold text-primary uppercase tracking-widest mb-2 pl-2">Email
                                         <span class="text-red-500">*</span></label>
                                     <input id="email" required type="email" placeholder="john@example.com"
-                                        class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-2xl px-5 py-4 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-text-muted/50 h-[58px]" />
+                                        class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-2xl px-5 py-4 text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors placeholder-text-muted/50 h-[58px]" />
                                     <!-- Privacy Disclaimer -->
                                     <p class="text-[10px] text-text-muted mt-2 pl-2 leading-tight">
                                         We store your name and email solely to record your donation pledge. We do not
@@ -379,11 +379,11 @@
                 <div
                     class="p-5 border-t border-border-light dark:border-border-dark flex justify-end gap-4 bg-surface-light dark:bg-surface-dark">
                     <button onclick="closeCropperModal()"
-                        class="px-8 py-3 rounded-full text-text-muted hover:bg-black/5 dark:hover:bg-white/5 font-medium transition-all">
+                        class="px-8 py-3 rounded-full text-text-muted hover:bg-black/5 dark:hover:bg-white/5 font-medium transition-colors">
                         Cancel
                     </button>
                     <button onclick="saveCrop()"
-                        class="px-8 py-3 rounded-full bg-primary hover:bg-primary-dark text-white font-bold shadow-lg shadow-primary/20 transition-all">
+                        class="px-8 py-3 rounded-full bg-primary hover:bg-primary-dark text-white font-bold shadow-lg shadow-primary/20 transition-colors">
                         Save Photo
                     </button>
                 </div>
@@ -516,7 +516,7 @@
 
     <!-- LOADING OVERLAY -->
     <div id="loading-overlay"
-        class="fixed inset-0 z-[100] hidden flex-col items-center justify-center bg-white/90 dark:bg-black/90 backdrop-blur-sm transition-all">
+        class="fixed inset-0 z-[100] hidden flex-col items-center justify-center bg-white/90 dark:bg-black/90 backdrop-blur-sm transition-opacity">
         <div class="size-16 border-4 border-border-light border-t-primary rounded-full animate-spin mb-4"></div>
         <h3 id="loading-text" class="text-xl font-bold text-text-main dark:text-white animate-pulse">Preparing your
             certificate...</h3>
@@ -709,18 +709,26 @@
 
         function capturePhoto() {
             if (!stream) return;
-            const canvas = document.createElement('canvas');
-            canvas.width = videoElement.videoWidth;
-            canvas.height = videoElement.videoHeight;
-            const ctx = canvas.getContext('2d');
-            // Flip horizontal for mirror effect
-            ctx.translate(canvas.width, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(videoElement, 0, 0);
 
-            const dataURL = canvas.toDataURL('image/jpeg');
+            // Instant Feedback: Show processing state
+            showLoading("Processing photo...");
             closeCameraModal();
-            openCropperModal(dataURL);
+
+            // Defer heavy canvas ops to next tick
+            setTimeout(() => {
+                const canvas = document.createElement('canvas');
+                canvas.width = videoElement.videoWidth;
+                canvas.height = videoElement.videoHeight;
+                const ctx = canvas.getContext('2d');
+                // Flip horizontal for mirror effect
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+                ctx.drawImage(videoElement, 0, 0);
+
+                const dataURL = canvas.toDataURL('image/jpeg');
+                hideLoading();
+                openCropperModal(dataURL);
+            }, 50);
         }
 
         // --- CROPPER LOGIC ---
@@ -787,14 +795,22 @@
 
         function saveCrop() {
             if (!cropper) return;
-            const canvas = cropper.getCroppedCanvas({
-                width: 1080,
-                height: 1080,
-            });
 
-            userData.photo = canvas.toDataURL('image/jpeg', 1.0);
-            updatePhotoPreviews();
-            closeCropperModal();
+            // Instant Feedback: Show processing state
+            showLoading("Saving crop...");
+
+            // Defer heavy canvas ops to next tick
+            setTimeout(() => {
+                const canvas = cropper.getCroppedCanvas({
+                    width: 1080,
+                    height: 1080,
+                });
+
+                userData.photo = canvas.toDataURL('image/jpeg', 1.0);
+                hideLoading();
+                updatePhotoPreviews();
+                closeCropperModal();
+            }, 50);
         }
 
         function updatePhotoPreviews() {
@@ -826,24 +842,33 @@
                 return; // Silent fail
             }
 
-            // Sanitize Name
-            userData.fullName = sanitizeInput(document.getElementById('fullName').value);
-
-            const countryCode = document.getElementById('countryCode').value;
+            // Basic Validation (fast checks first)
+            const fullNameInput = document.getElementById('fullName').value;
             const phone = document.getElementById('phone').value;
-            userData.phone = `${countryCode} ${phone}`;
-            userData.email = sanitizeInput(document.getElementById('email').value);
-            userData.marketingOptIn = document.getElementById('marketingCheckbox').checked;
-
-            if (!userData.fullName || !phone) return alert("Please fill in key fields");
-            if (!userData.photo) return alert("Please upload a photo");
-
             const consentCheckbox = document.getElementById('consentCheckbox');
+
+            if (!fullNameInput || !phone) return alert("Please fill in key fields");
+            if (!userData.photo) return alert("Please upload a photo");
             if (!consentCheckbox.checked) {
                 return alert("You must agree to the privacy policy data processing to continue.");
             }
 
-            goToStep('preview');
+            // Instant Feedback: Show processing state
+            showLoading("Processing...");
+
+            // Defer data processing and transition to next tick
+            setTimeout(() => {
+                // Sanitize Name
+                userData.fullName = sanitizeInput(fullNameInput);
+
+                const countryCode = document.getElementById('countryCode').value;
+                userData.phone = `${countryCode} ${phone}`;
+                userData.email = sanitizeInput(document.getElementById('email').value);
+                userData.marketingOptIn = document.getElementById('marketingCheckbox').checked;
+
+                hideLoading();
+                goToStep('preview');
+            }, 50);
         }
 
         function updateCertificateDOM() {
