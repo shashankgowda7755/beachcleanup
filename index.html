@@ -866,7 +866,7 @@
             }
 
             // Instant Feedback: Show processing state
-            showLoading("Processing...");
+            showLoading("Please wait, loading preview...");
 
             // Defer data processing and transition to next tick
             requestAnimationFrame(() => {
@@ -925,7 +925,7 @@
         }
 
         function downloadPDF() {
-            showLoading("Downloading certificate...");
+            showLoading("Please wait, downloading...");
 
             // Use requestAnimationFrame to ensure UI updates before heavy task
             requestAnimationFrame(() => {
@@ -966,7 +966,7 @@
         }
 
         function shareImpact() {
-            showLoading("Preparing to share...");
+            showLoading("Please wait, sharing...");
 
             requestAnimationFrame(() => {
                 const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
