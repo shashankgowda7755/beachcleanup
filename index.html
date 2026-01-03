@@ -421,7 +421,7 @@
                             </div>
 
                             <!-- Dynamic Name Overlay (Includes 'DEAR' prefix to overlap background) -->
-                            <div class="absolute top-[67%] left-[8%] w-[80%] text-left flex items-center h-[5%]">
+                            <div class="absolute top-[66.5%] left-[8%] w-[80%] text-left flex items-center h-[5%]">
                                 <h2
                                     class="text-lg sm:text-xl font-display font-black text-[#292524] uppercase tracking-wide leading-none">
                                     <span>DEAR </span>
@@ -888,13 +888,13 @@
             let fontSize;
 
             if (charCount <= 12) {
-                fontSize = '20px';  // Large for short names
+                fontSize = '16px';  // Reduced from 20px
             } else if (charCount <= 20) {
-                fontSize = '16px';  // Medium for 13-20 chars (user specified)
+                fontSize = '14px';  // Reduced from 16px
             } else if (charCount <= 30) {
-                fontSize = '14px';  // Smaller for long names
+                fontSize = '12px';  // Reduced from 14px
             } else {
-                fontSize = '12px';  // Smallest for very long names
+                fontSize = '10px';  // Reduced from 12px
             }
 
             nameContainer.style.fontSize = fontSize;
