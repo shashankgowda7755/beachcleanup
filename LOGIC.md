@@ -556,7 +556,7 @@ tailwind.config = {
 
 | Element | CSS Position | Dimensions |
 |---------|--------------|------------|
-| **Photo** | `top: 4.8%`, `left: 7.8%` | `width: 51.5%`, aspect-ratio 1:1 |
+| **Photo** | `top: 6.0%`, `left: 9.0%` | `width: 48.0%`, aspect-ratio 1:1 |
 | **Name** | `top: 69%`, `left: 8%` | `width: 80%` |
 
 ---
