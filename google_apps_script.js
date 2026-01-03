@@ -33,6 +33,15 @@ function doPost(e) {
                 "Privacy Consent",
                 "Marketing Opt-In"
             ]);
+        } else {
+            // Check if headers exist (if A1 is not "Date", assume missing headers)
+            const firstCell = sheet.getRange(1, 1).getValue();
+            if (firstCell !== "Date") {
+                sheet.insertRowBefore(1);
+                sheet.getRange(1, 1, 1, 9).setValues([[
+                    "Date", "Time", "Full Name", "Country Code", "Phone Number", "Full Phone", "Email", "Privacy Consent", "Marketing Opt-In"
+                ]]);
+            }
         }
 
         // Get current date and time in readable format
@@ -45,9 +54,9 @@ function doPost(e) {
             dateStr,                                    // Date
             timeStr,                                    // Time
             data.fullName || "",                        // Full Name
-            data.countryCode || "",                     // Country Code (e.g., +91)
-            data.phoneNumber || "",                     // Phone Number (without country code)
-            data.phone || "",                           // Full Phone (country code + number)
+            "'" + (data.countryCode || ""),             // Country Code (Force Text)
+            "'" + (data.phoneNumber || ""),             // Phone Number (Force Text)
+            "'" + (data.phone || ""),                   // Full Phone (Force Text)
             data.email || "",                           // Email
             data.privacyConsent ? "Yes" : "No",         // Privacy Policy Consent
             data.marketingOptIn ? "Yes" : "No"          // Marketing Opt-In
