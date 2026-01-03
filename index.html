@@ -727,7 +727,7 @@
             closeCameraModal();
 
             // Defer heavy canvas ops to next tick
-            requestAnimationFrame(() => {
+            runAfterPaint(() => {
                 const canvas = document.createElement('canvas');
                 canvas.width = videoElement.videoWidth;
                 canvas.height = videoElement.videoHeight;
@@ -749,7 +749,7 @@
             if (file) {
                 showLoading("Analyzing image...");
 
-                requestAnimationFrame(() => {
+                runAfterPaint(() => {
                     const objectUrl = window.URL.createObjectURL(file);
 
                     // Pre-load image to check dimensions (fast)
@@ -812,7 +812,7 @@
             showLoading("Saving crop...");
 
             // Defer heavy canvas ops to next tick
-            requestAnimationFrame(() => {
+            runAfterPaint(() => {
                 const canvas = cropper.getCroppedCanvas({
                     width: 1080,
                     height: 1080,
@@ -869,7 +869,7 @@
             showLoading("Please wait, loading preview...");
 
             // Defer data processing and transition to next tick
-            requestAnimationFrame(() => {
+            runAfterPaint(() => {
                 // Sanitize Name
                 userData.fullName = sanitizeInput(fullNameInput);
 
@@ -897,7 +897,7 @@
             showLoading("Finalizing certificate...");
 
             // Defer network/generation to next tick
-            requestAnimationFrame(() => {
+            runAfterPaint(() => {
                 submitToGoogleSheet(); // Fire and forget (async)
 
                 // Instant State Switch
@@ -924,11 +924,19 @@
             document.getElementById('loading-overlay').classList.remove('flex');
         }
 
+        // Helper: Ensure loading is painted before running heavy task
+        // Uses double requestAnimationFrame to guarantee browser paints the loading state
+        function runAfterPaint(callback) {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(callback);
+            });
+        }
+
         function downloadPDF() {
             showLoading("Please wait, downloading...");
 
-            // Use requestAnimationFrame to ensure UI updates before heavy task
-            requestAnimationFrame(() => {
+            // Use runAfterPaint to ensure loading is visible before heavy task
+            runAfterPaint(() => {
                 const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
 
                 // Fixed output dimensions for consistency across devices (Instagram 4:5 ratio)
@@ -968,7 +976,7 @@
         function shareImpact() {
             showLoading("Please wait, sharing...");
 
-            requestAnimationFrame(() => {
+            runAfterPaint(() => {
                 const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
 
                 // Fixed output dimensions for consistency across devices (Instagram 4:5 ratio)
