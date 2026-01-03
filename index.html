@@ -885,7 +885,27 @@
         }
 
         function updateCertificateDOM() {
-            document.getElementById('cert-user-name').textContent = userData.fullName;
+            const nameElement = document.getElementById('cert-user-name');
+            const nameContainer = nameElement.closest('h2');
+
+            nameElement.textContent = userData.fullName;
+
+            // Dynamic font sizing based on character count
+            const charCount = userData.fullName.length;
+            let fontSize;
+
+            if (charCount <= 12) {
+                fontSize = '20px';  // Large for short names
+            } else if (charCount <= 20) {
+                fontSize = '16px';  // Medium for 13-20 chars (user specified)
+            } else if (charCount <= 30) {
+                fontSize = '14px';  // Smaller for long names
+            } else {
+                fontSize = '12px';  // Smallest for very long names
+            }
+
+            nameContainer.style.fontSize = fontSize;
+
             const date = new Date();
             const options = { year: 'numeric', month: 'short', day: 'numeric' };
             document.getElementById('cert-date').textContent = date.toLocaleDateString('en-US', options);
