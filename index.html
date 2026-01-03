@@ -946,11 +946,11 @@
         }
 
         // Helper: Ensure loading is painted before running heavy task
-        // Uses double requestAnimationFrame to guarantee browser paints the loading state
+        // Uses setTimeout(16) - minimum 1 frame delay - to GUARANTEE browser paints the loading state
         function runAfterPaint(callback) {
-            requestAnimationFrame(() => {
-                requestAnimationFrame(callback);
-            });
+            // Force browser to paint the loading state before executing heavy work
+            // 16ms = ~1 frame at 60fps, ensures the loading overlay is visible
+            setTimeout(callback, 16);
         }
 
         function downloadPDF() {
