@@ -938,32 +938,35 @@
 
             // Use runAfterPaint to ensure loading is visible before heavy task
             runAfterPaint(() => {
-                const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
+                // Target ONLY the certificate visual, not any wrapper
+                const certElement = document.getElementById('certificate-visual');
 
-                // Fixed output dimensions for consistency across devices (Instagram 4:5 ratio)
-                const outputWidth = 1080;
-                const outputHeight = 1440;
+                if (!certElement) {
+                    hideLoading();
+                    alert("Certificate not found.");
+                    return;
+                }
+
+                // Get the actual rendered dimensions
+                const rect = certElement.getBoundingClientRect();
 
                 html2canvas(certElement, {
-                    scale: 2, // Optimized for performance (Retina)
+                    scale: 2, // High quality
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
-                    width: certElement.offsetWidth,
-                    height: certElement.offsetHeight,
-                    windowWidth: certElement.offsetWidth,
-                    windowHeight: certElement.offsetHeight
+                    // Use the element's actual dimensions
+                    width: certElement.scrollWidth,
+                    height: certElement.scrollHeight,
+                    // Prevent capturing elements outside the certificate
+                    x: 0,
+                    y: 0,
+                    scrollX: 0,
+                    scrollY: 0
                 }).then(canvas => {
-                    // Resize to fixed Instagram dimensions
-                    const resizedCanvas = document.createElement('canvas');
-                    resizedCanvas.width = outputWidth;
-                    resizedCanvas.height = outputHeight;
-                    const ctx = resizedCanvas.getContext('2d');
-                    ctx.drawImage(canvas, 0, 0, outputWidth, outputHeight);
-
                     const link = document.createElement('a');
                     link.download = `Certificate-${userData.fullName.replace(/\s+/g, '-')}.png`;
-                    link.href = resizedCanvas.toDataURL('image/png');
+                    link.href = canvas.toDataURL('image/png');
                     link.click();
                     hideLoading();
                 }).catch(err => {
@@ -978,30 +981,28 @@
             showLoading("Please wait, sharing...");
 
             runAfterPaint(() => {
-                const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
+                // Target ONLY the certificate visual, not any wrapper
+                const certElement = document.getElementById('certificate-visual');
 
-                // Fixed output dimensions for consistency across devices (Instagram 4:5 ratio)
-                const outputWidth = 1080;
-                const outputHeight = 1440;
+                if (!certElement) {
+                    hideLoading();
+                    alert("Certificate not found.");
+                    return;
+                }
 
                 html2canvas(certElement, {
-                    scale: 2, // Optimized for performance
+                    scale: 2, // High quality
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
-                    width: certElement.offsetWidth,
-                    height: certElement.offsetHeight,
-                    windowWidth: certElement.offsetWidth,
-                    windowHeight: certElement.offsetHeight
+                    width: certElement.scrollWidth,
+                    height: certElement.scrollHeight,
+                    x: 0,
+                    y: 0,
+                    scrollX: 0,
+                    scrollY: 0
                 }).then(canvas => {
-                    // Resize to fixed Instagram dimensions
-                    const resizedCanvas = document.createElement('canvas');
-                    resizedCanvas.width = outputWidth;
-                    resizedCanvas.height = outputHeight;
-                    const ctx = resizedCanvas.getContext('2d');
-                    ctx.drawImage(canvas, 0, 0, outputWidth, outputHeight);
-
-                    resizedCanvas.toBlob(blob => {
+                    canvas.toBlob(blob => {
                         if (blob) {
                             const file = new File([blob], `Certificate-${userData.fullName.replace(/\s+/g, '-')}.png`, { type: 'image/png' });
 
