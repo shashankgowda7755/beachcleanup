@@ -525,6 +525,18 @@
 
     <!-- Logic -->
     <script>
+        // --- PRELOAD ASSETS FOR INSTANT TRANSITIONS ---
+        // Load certificate background immediately to prevent delay when viewing preview
+        const preloadedImages = {};
+        (function preloadAssets() {
+            const imagesToPreload = ['poster_bg.png'];
+            imagesToPreload.forEach(src => {
+                const img = new Image();
+                img.src = src;
+                preloadedImages[src] = img;
+            });
+        })();
+
         // --- CONFIGURATION ---
         // 1. Create a Google Apps Script (see google_apps_script.js file for code)
         // 2. Deploy it as a Web App (Execute as: Me, Access: Anyone)
@@ -715,7 +727,7 @@
             closeCameraModal();
 
             // Defer heavy canvas ops to next tick
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 const canvas = document.createElement('canvas');
                 canvas.width = videoElement.videoWidth;
                 canvas.height = videoElement.videoHeight;
@@ -728,7 +740,7 @@
                 const dataURL = canvas.toDataURL('image/jpeg');
                 hideLoading();
                 openCropperModal(dataURL);
-            }, 50);
+            });
         }
 
         // --- CROPPER LOGIC ---
@@ -737,7 +749,7 @@
             if (file) {
                 showLoading("Analyzing image...");
 
-                setTimeout(() => {
+                requestAnimationFrame(() => {
                     const objectUrl = window.URL.createObjectURL(file);
 
                     // Pre-load image to check dimensions (fast)
@@ -763,7 +775,7 @@
                         hideLoading();
                         alert("Invalid image file.");
                     };
-                }, 50);
+                });
             }
             event.target.value = '';
         }
@@ -800,7 +812,7 @@
             showLoading("Saving crop...");
 
             // Defer heavy canvas ops to next tick
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 const canvas = cropper.getCroppedCanvas({
                     width: 1080,
                     height: 1080,
@@ -810,7 +822,7 @@
                 hideLoading();
                 updatePhotoPreviews();
                 closeCropperModal();
-            }, 50);
+            });
         }
 
         function updatePhotoPreviews() {
@@ -857,7 +869,7 @@
             showLoading("Processing...");
 
             // Defer data processing and transition to next tick
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 // Sanitize Name
                 userData.fullName = sanitizeInput(fullNameInput);
 
@@ -868,7 +880,7 @@
 
                 hideLoading();
                 goToStep('preview');
-            }, 50);
+            });
         }
 
         function updateCertificateDOM() {
@@ -885,7 +897,7 @@
             showLoading("Finalizing certificate...");
 
             // Defer network/generation to next tick
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 submitToGoogleSheet(); // Fire and forget (async)
 
                 // Instant State Switch
@@ -897,7 +909,7 @@
                 document.getElementById('final-cert-container').appendChild(certNode);
 
                 goToStep('success'); // The "Conditional Render" switch
-            }, 50);
+            });
         }
 
         // --- LOADING HELPER ---
@@ -915,8 +927,8 @@
         function downloadPDF() {
             showLoading("Downloading certificate...");
 
-            // Small delay to ensure UI updates before heavy task
-            setTimeout(() => {
+            // Use requestAnimationFrame to ensure UI updates before heavy task
+            requestAnimationFrame(() => {
                 const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
 
                 // Fixed output dimensions for consistency across devices (Instagram 4:5 ratio)
@@ -950,13 +962,13 @@
                     alert("Error downloading image.");
                     hideLoading();
                 });
-            }, 100);
+            });
         }
 
         function shareImpact() {
             showLoading("Preparing to share...");
 
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
 
                 // Fixed output dimensions for consistency across devices (Instagram 4:5 ratio)
@@ -1011,7 +1023,7 @@
                     hideLoading();
                     alert("Error preparing image for sharing.");
                 });
-            }, 100);
+            });
         }
 
         function resetApp() {
