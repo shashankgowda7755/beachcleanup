@@ -550,8 +550,8 @@
                 phone: userData.phone,  // Full phone with country code
                 email: userData.email,
                 privacyConsent: userData.privacyConsent,
-                marketingOptIn: userData.marketingOptIn,
-                photo: userData.photo // Warning: Base64 might be large
+                marketingOptIn: userData.marketingOptIn
+                // Photo NOT stored
             };
 
             fetch(GOOGLE_SCRIPT_URL, {
