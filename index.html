@@ -871,7 +871,7 @@
                 const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
 
                 html2canvas(certElement, {
-                    scale: 4, // High Resolution
+                    scale: 2, // Optimized for performance (Retina)
                     useCORS: true,
                     backgroundColor: null,
                     logging: false
@@ -896,7 +896,7 @@
                 const certElement = document.getElementById('final-cert-container').querySelector('#certificate-visual') || document.getElementById('certificate-visual');
 
                 html2canvas(certElement, {
-                    scale: 3, // Better quality for sharing
+                    scale: 2, // Optimized for performance
                     useCORS: true,
                     backgroundColor: null,
                     logging: false
