@@ -25,7 +25,7 @@ const Success: React.FC<SuccessProps> = ({ userData, onReset }) => {
                         scale: 2, // High quality
                         useCORS: true,
                         allowTaint: true,
-                        backgroundColor: '#050505',
+                        backgroundColor: '#020617', // Match poster bg
                         width: 1080,
                         height: 1440,
                         logging: false
@@ -36,7 +36,7 @@ const Success: React.FC<SuccessProps> = ({ userData, onReset }) => {
 
                     // Create File object for sharing
                     const blob = await (await fetch(url)).blob();
-                    const f = new File([blob], `Poster-${userData.fullName.replace(/\s+/g, '-')}.png`, { type: 'image/png' });
+                    const f = new File([blob], `Certificate-${userData.fullName.replace(/\s+/g, '-')}.png`, { type: 'image/png' });
                     setFile(f);
                 } catch (e) {
                     console.error("Generation failed", e);
@@ -52,7 +52,7 @@ const Success: React.FC<SuccessProps> = ({ userData, onReset }) => {
         if (!imageUrl) return;
         const a = document.createElement('a');
         a.href = imageUrl;
-        a.download = `Poster-${userData.fullName.replace(/\s+/g, '-')}.png`;
+        a.download = `Certificate-${userData.fullName.replace(/\s+/g, '-')}.png`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -63,8 +63,8 @@ const Success: React.FC<SuccessProps> = ({ userData, onReset }) => {
             try {
                 await navigator.share({
                     files: [file],
-                    title: 'My Custom Poster',
-                    text: `I just created my custom poster! Create yours now.`
+                    title: 'My Clean Shores Certificate',
+                    text: `I just received my certificate for being an Ocean Hero! Join the movement.`
                 });
             } catch (err) {
                 console.log('Share cancelled');
@@ -75,12 +75,12 @@ const Success: React.FC<SuccessProps> = ({ userData, onReset }) => {
     };
 
     const handleDonate = () => {
-        const msg = encodeURIComponent("Hi, I'd like to create a poster.");
+        const msg = encodeURIComponent("Hi, I'd like to join the next beach cleanup.");
         window.open(`https://wa.me/?text=${msg}`, '_blank');
     };
 
     const handleInstagram = () => {
-        window.open('https://instagram.com/your_handle', '_blank'); // Replace with actual handle
+        window.open('https://instagram.com/', '_blank');
     };
 
     return (
@@ -94,17 +94,17 @@ const Success: React.FC<SuccessProps> = ({ userData, onReset }) => {
             <div className="max-w-xl w-full">
                 {/* Success Header */}
                 <div className="mb-8">
-                    <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20 shadow-lg shadow-green-500/10">
-                        <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    <div className="w-20 h-20 bg-teal-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-teal-500/20 shadow-lg shadow-teal-500/10">
+                        <svg className="w-10 h-10 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <h2 className="text-3xl font-playfair font-bold text-white mb-2">Poster Ready!</h2>
-                    <p className="text-gray-400">Your custom poster has been generated.</p>
+                    <h2 className="text-3xl font-serif font-bold text-white mb-2">Certificate Ready!</h2>
+                    <p className="text-gray-400">Your custom certificate has been generated.</p>
                 </div>
 
                 {/* Certificate Display */}
                 <div className="glass-panel p-2 rounded-xl mb-8 border border-white/5 bg-white/5 inline-block shadow-2xl">
                     {loading ? (
-                        <div className="w-[270px] h-[360px] flex items-center justify-center text-amber-500">
+                        <div className="w-[270px] h-[360px] flex items-center justify-center text-teal-500">
                             <span className="animate-pulse">Generating High Quality...</span>
                         </div>
                     ) : (
@@ -124,13 +124,13 @@ const Success: React.FC<SuccessProps> = ({ userData, onReset }) => {
                         className="flex-1 px-6 py-4 rounded-xl bg-white text-black font-bold hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                        Download Poster
+                        Download Certificate
                     </button>
 
                     <button
                         onClick={handleShare}
                         disabled={loading}
-                        className="flex-1 px-6 py-4 rounded-xl bg-[#25D366] text-white font-bold hover:bg-[#20bd5a] transition-colors flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
+                        className="flex-1 px-6 py-4 rounded-xl bg-teal-500 text-white font-bold hover:bg-teal-600 transition-colors flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
                     >
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
                         Share
@@ -142,16 +142,16 @@ const Success: React.FC<SuccessProps> = ({ userData, onReset }) => {
                     {/* Donate Action */}
                     <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-left">
                         <h3 className="font-bold text-lg mb-1">Create Another?</h3>
-                        <p className="text-gray-400 text-sm mb-3">Make another poster today.</p>
-                        <button onClick={handleDonate} className="text-amber-500 font-bold text-sm uppercase tracking-wider hover:text-amber-400 flex items-center gap-1">
-                            Message on WhatsApp →
+                        <p className="text-gray-400 text-sm mb-3">Make another certificate today.</p>
+                        <button onClick={handleDonate} className="text-teal-400 font-bold text-sm uppercase tracking-wider hover:text-teal-300 flex items-center gap-1">
+                            Volunteer Again →
                         </button>
                     </div>
 
                     {/* Insta Action */}
                     <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-left">
                         <h3 className="font-bold text-lg mb-1">Follow Us</h3>
-                        <p className="text-gray-400 text-sm mb-3">Stay updated with our latest.</p>
+                        <p className="text-gray-400 text-sm mb-3">Stay updated with our latest cleanups.</p>
                         <button onClick={handleInstagram} className="text-pink-500 font-bold text-sm uppercase tracking-wider hover:text-pink-400 flex items-center gap-1">
                             Follow on Instagram →
                         </button>

@@ -33,13 +33,13 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit, onBack, initialData }) =>
 
     return (
         <section className="min-h-screen flex items-center justify-center px-4 py-8 animate-fade-in">
-            <div className="w-full max-w-xl bg-[#111116] border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+            <div className="w-full max-w-xl bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
                 {/* Top Gradient Line */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400" />
 
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-playfair font-bold text-white mb-2">Key Details</h2>
-                    <p className="text-gray-500 text-sm">Enter details for your poster</p>
+                    <h2 className="text-3xl font-serif font-bold text-white mb-2">Volunteer Registration</h2>
+                    <p className="text-gray-400 text-sm">Enter your details for the certificate</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -47,7 +47,7 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit, onBack, initialData }) =>
                     <div className="flex flex-col items-center">
                         <div
                             onClick={() => fileInputRef.current?.click()}
-                            className={`w-32 h-32 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer overflow-hidden relative group transition-all ${data.photo ? 'border-amber-500' : 'border-gray-600 hover:border-amber-500'
+                            className={`w-32 h-32 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer overflow-hidden relative group transition-all ${data.photo ? 'border-primary' : 'border-slate-600 hover:border-primary'
                                 }`}
                         >
                             {data.photo ? (
@@ -76,38 +76,38 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit, onBack, initialData }) =>
                     {/* Fields */}
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-xs font-bold text-amber-500 uppercase tracking-widest mb-1.5">Full Name <span className="text-red-500">*</span></label>
+                            <label className="block text-xs font-bold text-primary uppercase tracking-widest mb-1.5">Full Name <span className="text-red-500">*</span></label>
                             <input
                                 required
                                 type="text"
                                 value={data.fullName}
                                 onChange={e => setData({ ...data, fullName: e.target.value })}
                                 placeholder="Enter your full name"
-                                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all placeholder-gray-600"
+                                className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-gray-500"
                             />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-xs font-bold text-amber-500 uppercase tracking-widest mb-1.5">Phone <span className="text-red-500">*</span></label>
+                                <label className="block text-xs font-bold text-primary uppercase tracking-widest mb-1.5">Phone <span className="text-red-500">*</span></label>
                                 <input
                                     required
                                     type="tel"
                                     value={data.phone}
                                     onChange={e => setData({ ...data, phone: e.target.value })}
                                     placeholder="+91 99999 99999"
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-amber-500 outline-none transition-all placeholder-gray-600"
+                                    className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary outline-none transition-all placeholder-gray-500"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-amber-500 uppercase tracking-widest mb-1.5">Email <span className="text-red-500">*</span></label>
+                                <label className="block text-xs font-bold text-primary uppercase tracking-widest mb-1.5">Email <span className="text-red-500">*</span></label>
                                 <input
                                     required
                                     type="email"
                                     value={data.email}
                                     onChange={e => setData({ ...data, email: e.target.value })}
                                     placeholder="john@example.com"
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-amber-500 outline-none transition-all placeholder-gray-600"
+                                    className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary outline-none transition-all placeholder-gray-500"
                                 />
                             </div>
                         </div>
@@ -119,10 +119,10 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit, onBack, initialData }) =>
                             type="checkbox"
                             required
                             id="privacy"
-                            className="mt-1 w-4 h-4 rounded border-gray-600 text-amber-500 focus:ring-amber-500 bg-black/40"
+                            className="mt-1 w-4 h-4 rounded border-slate-600 text-primary focus:ring-primary bg-slate-800/50"
                         />
                         <label htmlFor="privacy" className="text-sm text-gray-400">
-                            I agree to the <a href="/privacy-policy.html" target="_blank" className="text-amber-500 hover:text-amber-400 underline">Privacy Policy</a> and consent to using my photo for this poster.
+                            I agree to the <a href="/privacy-policy.html" target="_blank" className="text-primary hover:text-primary-dark underline">Privacy Policy</a> and consent to using my photo for this certificate.
                         </label>
                     </div>
 
@@ -137,9 +137,9 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit, onBack, initialData }) =>
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 text-black font-bold shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                            className="flex-1 px-6 py-3.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold shadow-lg shadow-teal-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                         >
-                            Preview Poster
+                            Generate Certificate
                         </button>
                     </div>
 

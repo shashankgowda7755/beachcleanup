@@ -45,7 +45,7 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white font-inter selection:bg-amber-500/30">
+        <div className="min-h-screen font-sans">
             {currentStep === Step.Hero && (
                 <Hero onStart={handleStart} />
             )}
