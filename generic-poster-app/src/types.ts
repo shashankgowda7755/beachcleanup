@@ -4,7 +4,7 @@ export interface UserData {
     phone: string;
     // Generic additional fields can be added here
     message?: string;
-    photo?: string;        // Donor photo
+    photo?: string;        // User photo
 }
 
 export enum Step {
