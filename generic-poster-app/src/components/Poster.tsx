@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { UserData } from '../types';
 
 interface PosterProps {

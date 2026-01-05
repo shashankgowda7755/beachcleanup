@@ -40,7 +40,7 @@ const App: React.FC = () => {
 
     // Restart
     const handleReset = () => {
-        setUserData({ fullName: '', email: '', phone: '', photo: undefined, watchModel: '' });
+        setUserData({ fullName: '', email: '', phone: '', photo: undefined });
         setCurrentStep(Step.Hero);
     };
 

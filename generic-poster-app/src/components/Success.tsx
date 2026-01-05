@@ -7,7 +7,14 @@ interface SuccessProps {
     onReset: () => void;
 }
 
-const Success: React.FC<SuccessProps> = ({ userData, onReset }) => {
+// Extend Window interface for html2canvas
+declare global {
+    interface Window {
+        html2canvas: any;
+    }
+}
+
+const Success: React.FC<SuccessProps> = ({ userData }) => {
     const hiddenPosterRef = useRef<HTMLDivElement>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
